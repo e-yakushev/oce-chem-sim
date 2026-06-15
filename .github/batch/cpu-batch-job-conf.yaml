@@ -1,0 +1,43 @@
+# ============================================================
+# Google Cloud Batch Job for FjordsSim / Oceananigans Run
+# 4 vCPUs, 32 GB RAM, 100 GB boot disk
+# ============================================================
+
+taskGroups:
+  - taskSpec:
+      runnables:
+        - container:
+            imageUri: "IMAGE_URI_PLACEHOLDER"
+      computeResource:
+        cpuMilli: 4000          # 4 vCPUs
+        memoryMib: 32768        # 32 GB RAM
+      environment:
+        variables:
+          ARCH: "cpu"
+          SCENARIO: "SCENARIO_PLACEHOLDER"
+          STOP_DAYS: "STOP_DAYS_PLACEHOLDER"
+          GCS_BUCKET: "oceananigans-nivatest-1"
+          GCS_INPUT_PREFIX: "input"
+          GCS_OUTPUT_PREFIX: "output"
+          JULIA_NUM_THREADS: "4"
+    taskCount: 1
+    parallelism: 1
+
+allocationPolicy:
+  serviceAccount:
+    email: gcp-batch-sa@nivatest-1.iam.gserviceaccount.com
+
+  location:
+    allowedLocations:
+      - "zones/europe-west1-b"
+      - "zones/europe-west1-c"
+      - "zones/europe-west1-d"
+
+  instances:
+    - policy:
+        machineType: "n2-highmem-4"   # 4 vCPU, 32 GB RAM
+        bootDisk:
+          sizeGb: 100                 # 100 GB boot disk
+
+logsPolicy:
+  destination: CLOUD_LOGGING

@@ -1,0 +1,4 @@
+*.nc
+data/output/
+__pycache__/
+*.pyc
