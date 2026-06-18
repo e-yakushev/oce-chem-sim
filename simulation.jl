@@ -151,16 +151,16 @@ function main()
         ##         Ci_free=0, Ci_PHY=0, Ci_HET=0, Ci_POM=0, Ci_DOM=0) :
         ##        (T=50, S=50, e=0, NUT=50, P=50, HET=50, POM=50, DOM=50, O₂=50),
         ##),
-        # 2nd-order (Laplacian) horizontal diffusion for Ci tracers only.
+        # 2nd-order (Laplacian) horizontal diffusion for all tracers.
         # Unlike biharmonic, Laplacian diffusion is positive-definite: it cannot
         # create new extrema, so it smears the sharp river-source gradient without
         # generating undershoots.  κ=10 m²/s gives ~2.25 h e-folding at 300 m grid.
-        ##Oceananigans.TurbulenceClosures.HorizontalScalarDiffusivity(
-        ##    κ = Ci_ ?
-        ##        (T=0, S=0, e=0, NUT=0, P=0, HET=0, POM=0, DOM=0, O₂=0,
-        ##         Ci_free=10, Ci_PHY=10, Ci_HET=10, Ci_POM=10, Ci_DOM=10) :
-        ##        (T=0, S=0, e=0, NUT=0, P=0, HET=0, POM=0, DOM=0, O₂=0),
-        ##),
+        Oceananigans.TurbulenceClosures.HorizontalScalarDiffusivity(
+            κ = Ci_ ?
+                (T=10, S=10, e=0, NUT=10, P=10, HET=10, POM=10, DOM=10, O₂=10,
+                 Ci_free=10, Ci_PHY=10, Ci_HET=10, Ci_POM=10, Ci_DOM=10) :
+                (T=10, S=10, e=0, NUT=10, P=10, HET=10, POM=10, DOM=10, O₂=10),
+        ),
      )    
 #¤     tracer_advection = ()
     # Ci tracers use UpwindBiased(order=5) instead of WENO.
@@ -384,7 +384,8 @@ function main()
     # max_Δt=20s: further reduced to tighten lambda*dt at the river source.
     # lambda_max=4.19e-4/s -> lambda*dt = 4.19e-4 * 20 = 0.0084 (very stable).
     #conjure_time_step_wizard!(simulation; cfl=0.1, max_Δt=45, max_change=1.01) #works with patches
-    conjure_time_step_wizard!(simulation; cfl=0.1, max_Δt=30, max_change=1.01)
+    conjure_time_step_wizard!(simulation; cfl=0.1, max_Δt=45, max_change=1.01)
+#    conjure_time_step_wizard!(simulation; cfl=0.1, max_Δt=20, max_change=1.01) #works with patches also
     run!(simulation)
 end
 
